@@ -1,3 +1,9 @@
+# ADICIONADOS
+*.html
+Documentos/
+*.imgs/
+
+
 # History files
 .Rhistory
 .Rapp.history
