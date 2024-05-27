@@ -1,5 +1,5 @@
 ---
-title:  Chapter 3. A Review of R Modeling Fundamentals
+title:  Part 1. A Review of R Modeling Fundamentals
 author: MAX KUHN AND JULIA SILGE
 date:   "Atualizado em `r format(as.Date('2023-09-06'), '%d/%m/%Y')`"
 
@@ -32,6 +32,11 @@ theme_update(
 )
 ```
 
+
+\
+
+# (PART) - INTRODUCTION {.unnumbered}
+
 \
 
 # Software for modeling
@@ -52,7 +57,7 @@ theme_update(
 
 Before describing how to use `tidymodels` for applying tidy data principles to building models with R, let’s review how models are created, trained, and used in the core R language (often called “base R”). This chapter is a brief illustration of core language conventions that are important to be aware of even if you never use base R for models at all. This chapter is not exhaustive, but it provides readers (especially those new to R) the basic, most commonly used motifs.
 
-The S language, on which R is based, has had a rich data analysis environment since the publication of Chambers and Hastie (1992) (commonly known as The White Book). This version of S introduced standard infrastructure components familiar to R users today, such as symbolic model formulae, model matrices, and data frames, as well as standard object-oriented programming methods for data analysis. These user interfaces have not substantively changed since then.
+The S language, on which R is based, has had a rich data analysis environment since the publication of [Chambers and Hastie (1992)](#references) -- commonly known as The White Book. This version of S introduced standard infrastructure components familiar to R users today, such as symbolic model formulae, model matrices, and data frames, as well as standard object-oriented programming methods for data analysis. These user interfaces have not substantively changed since then.
 
 \
 
@@ -60,7 +65,7 @@ The S language, on which R is based, has had a rich data analysis environment si
 
 \
 
-To demonstrate some fundamentals for modeling in base R, let’s use experimental data from McDonald (2009), by way of Mangiafico (2015), on the relationship between the ambient temperature and the rate of cricket chirps per minute. Data were collected for two species: O. exclamationis and O. niveus. The data are contained in a data frame called `crickets` with a total of 31 data points. These data are shown in Figure \@ref(fig:3-1) using the following `ggplot2` code.
+To demonstrate some fundamentals for modeling in base R, let’s use experimental data from [McDonald (2009)](#references), by way of [Mangiafico (2015)](#references), on the relationship between the ambient temperature and the rate of cricket chirps per minute. Data were collected for two species: O. exclamationis and O. niveus. The data are contained in a data frame called `crickets` with a total of 31 data points. These data are shown in Figure \@ref(fig:3-1) using the following `ggplot2` code.
 
 ```{r}
 data(crickets, package = "modeldata")
@@ -83,6 +88,8 @@ ggplot(crickets,
 
 ))
 ```
+
+\
 
 The data exhibit fairly linear trends for each species. For a given temperature, O. exclamationis appears to chirp more per minute than the other species. For an inferential model, the researchers might have specified the following null hypotheses prior to seeing the data:
 
@@ -372,7 +379,7 @@ From a user’s point of view, `na.omit()` can be problematic. In our example, `
 
 To adjust for this if the predictions were merged back into `new_values`, the user would have to determine which row had the missing value and interleave a missing value in the appropriate place.^[A base R policy called na.exclude() does exactly this.] While it is rare that a prediction function uses `na.omit()` as its missing data policy, this does occur. Users who have determined this as the cause of an error in their code find it quite memorable.
 
-To resolve the usage issues described here, the tidymodels packages have a set of design goals. Most of the tidymodels design goals fall under the existing rubric of “Design for Humans” from the tidyverse (Wickham et al. 2019), but with specific applications for modeling code. There are a few additional tidymodels design goals that complement those of the tidyverse. Some examples:
+To resolve the usage issues described here, the tidymodels packages have a set of design goals. Most of the tidymodels design goals fall under the existing rubric of “Design for Humans” from the tidyverse ([Wickham et al. 2019](#references)), but with specific applications for modeling code. There are a few additional tidymodels design goals that complement those of the tidyverse. Some examples:
 
 *  R has excellent capabilities for object-oriented programming, and we use this in lieu of creating new function names (such as a hypothetical new `predict_samples()` function).
 
@@ -580,7 +587,22 @@ The tidymodels metapackage applies tidyverse design philosophy to modeling packa
 
 \
 
-# References {.unnumbered}
+# (PART) - MODELING BASICS {.unnumbered}
+
+
+\
+
+# (PART) - TOOLS FOR CREATING EFFECTIVE MODELS {.unnumbered}
+
+
+\
+
+# (PART) - BEYOND THE BASICS {.unnumbered}
+
+
+\
+
+# REFERENCES {#references .unnumbered}
 
 Chambers, J, and T Hastie, eds. 1992. *"Statistical Models in S"*. Boca Raton, FL: CRC Press, Inc.
 
