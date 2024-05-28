@@ -60,7 +60,7 @@ ames_test  <-  testing(ames_split)
 
 \
 
-# A Review of R Modeling Fundamentals
+# R MODELING FUNDAMENTALS
 
 [<https://www.tmwr.org/base-r>]
 
@@ -70,19 +70,19 @@ ames_test  <-  testing(ames_split)
 
 \
 
-# The Ames Housing Data
+# The Data
 
 [<https://www.tmwr.org/ames>]
 
 \
 
-# Spending our data
+# Spending data
 
 [<https://www.tmwr.org/splitting>]
 
 \
 
-# Fitting Models with parsnip
+# FITTING MODELS (parsnip)
 
 [<https://www.tmwr.org/models>]
 
@@ -244,17 +244,15 @@ Not only does `parsnip` enable a consistent model interface for different packag
 
 In an effort to make argument specification less painful, `parsnip` uses common argument names within and between packages. Table 6.2 shows, for [random forests]{.underline}, what parsnip models use.
 
-
 ![Table 6.2: Random forest argument names used by parsnip.](.imgs/table-6-2.png){width="200"}
-
 
 \
 
-Admittedly, this is one more set of arguments to memorize. However, when other types of models have the same argument types, these names still apply. 
+Admittedly, this is one more set of arguments to memorize. However, when other types of models have the same argument types, these names still apply.
 
 For example, [boosted tree ensembles]{.underline} also create a large number of tree-based models, so `trees` is also used there, as is `min_n`, and so on.
 
-Some of the original argument names can also be fairly jargon-y. For example, to specify the amount of regularization to use in a `glmnet` model, the Greek letter $\lambda$ is used. While this mathematical notation is commonly used in the statistics literature, it is not obvious to many people what `lambda` represents (especially those who consume the model results). Since this is the penalty used in regularization, parsnip standardizes on the argument name `penalty`. 
+Some of the original argument names can also be fairly jargon-y. For example, to specify the amount of regularization to use in a `glmnet` model, the Greek letter $\lambda$ is used. While this mathematical notation is commonly used in the statistics literature, it is not obvious to many people what `lambda` represents (especially those who consume the model results). Since this is the penalty used in regularization, parsnip standardizes on the argument name `penalty`.
 
 Similarly, the number of neighbors in a [KNN model]{.underline} is called `neighbors` instead of `k`. Our rule of thumb when standardizing argument names is: **If a practitioner were to include these names in a plot or table, would the people viewing those results understand the name?**
 
@@ -271,9 +269,9 @@ rand_forest(trees = 1000, min_n = 5) %>%
 
 Modeling functions in parsnip separate model arguments into two categories:
 
-*  [Main arguments]{.underline} are more commonly used and tend to be available across engines.
+-   [Main arguments]{.underline} are more commonly used and tend to be available across engines.
 
-*  [Engine arguments]{.underline} are either specific to a particular engine or used more rarely.
+-   [Engine arguments]{.underline} are either specific to a particular engine or used more rarely.
 
 For example, in the translation of the previous [random forest]{.underline} code, the arguments `num.threads`, `verbose`, and `seed` were added by default. These arguments are specific to the ranger implementation of [random forest models]{.underline} and wouldn’t make sense as main arguments. Engine-specific arguments can be specified in `set_engine()`. For example, to have the `ranger::ranger()` function print out more information about the fit:
 
@@ -299,16 +297,15 @@ lm_form_fit %>% extract_fit_engine()
 
 Normal methods can be applied to this object, such as printing and plotting:
 
-
 ```{r}
 # Calculate Variance-Covariance Matrix for a Fitted Model Object
 lm_form_fit %>% extract_fit_engine() %>% vcov()
 ```
 
 ::: {.alert .alert-block .alert-danger}
-Never pass the fit element of a parsnip model to a model prediction function, i.e., use `predict(lm_form_fit)` but do not use `predict(lm_form_fit$fit)`. 
+Never pass the fit element of a parsnip model to a model prediction function, i.e., use `predict(lm_form_fit)` but do not use `predict(lm_form_fit$fit)`.
 
-If the data were preprocessed in any way, incorrect predictions would be generated (sometimes, without errors). The underlying model’s prediction function has no idea if any transformations have been made to the data prior to running the model. See [Make predictions] for more on making predictions.
+If the data were preprocessed in any way, incorrect predictions would be generated (sometimes, without errors). The underlying model’s prediction function has no idea if any transformations have been made to the data prior to running the model. See [Make predictions](#make-predictions) for more on making predictions.
 :::
 
 \
@@ -321,7 +318,6 @@ One issue with some existing methods in base R is that the results are stored in
   summary())
 ```
 
-
 ```{r}
 options(scipen=000) # "Liga" notação científica. 
 
@@ -332,9 +328,10 @@ options(scipen=000) # "Liga" notação científica.
 ```{r}
 class(param_est)
 ```
+
 There are a few things to notice about this result. First, the `param_est` object is a numeric matrix. This data structure was mostly likely chosen because all of the calculated results are numeric and a matrix object is stored more efficiently than a data frame. This choice was probably made in the late 1970s when computational efficiency was extremely critical. Second, the non-numeric data (the labels for the coefficients) are contained in the row names. Keeping the parameter labels as row names is very consistent with the conventions in the original S language.
 
-A reasonable next step might be to create a visualization of the parameter values. To do this, it would be sensible to convert the parameter matrix to a data frame. We could add the row names as a column so that they can be used in a plot. However, notice that several of the existing matrix column names would not be valid R column names for ordinary data frames (e.g., `"Pr(>|t|)"`). 
+A reasonable next step might be to create a visualization of the parameter values. To do this, it would be sensible to convert the parameter matrix to a data frame. We could add the row names as a column so that they can be used in a plot. However, notice that several of the existing matrix column names would not be valid R column names for ordinary data frames (e.g., `"Pr(>|t|)"`).
 
 Another complication is the consistency of the column names. For lm objects, the column for the p-value is `"Pr(>|t|)"`, but for other models, a different test might be used and, as a result, the column name would be different (e.g., `"Pr(>|z|)"`) and the type of test would be encoded in the column name.
 
@@ -350,10 +347,9 @@ tidy(lm_form_fit)
 
 The column names are standardized across models and do not contain any additional data (such as the type of statistical test). The data previously contained in the row names are now in a column called term. One important principle in the tidymodels ecosystem is that a function should return values that are predictable, consistent, and unsurprising.
 
-
 \
 
-## Make predictions
+## Make predictions {#make-predictions}
 
 \
 
@@ -404,7 +400,7 @@ For the second tidymodels prediction rule, the predictable column names for diff
 
 \
 
-The third rule regarding the number of rows in the output is critical. For example, if any rows of the new data contain missing values, the output will be padded with missing results for those rows. A main advantage of standardizing the model interface and prediction types in parsnip is that, when different models are used, the syntax is identical. 
+The third rule regarding the number of rows in the output is critical. For example, if any rows of the new data contain missing values, the output will be padded with missing results for those rows. A main advantage of standardizing the model interface and prediction types in parsnip is that, when different models are used, the syntax is identical.
 
 Suppose that we used a [decision tree]{.underline} to model the Ames data. Outside of the model specification, there are no significant differences in the code pipeline:
 
@@ -427,13 +423,13 @@ This demonstrates the benefit of homogenizing the data analysis process and synt
 
 ## Extension packages
 
-The parsnip package itself contains interfaces to a number of models. However, for ease of package installation and maintenance, there are other tidymodels packages that have parsnip model definitions for other sets of models. 
+The parsnip package itself contains interfaces to a number of models. However, for ease of package installation and maintenance, there are other tidymodels packages that have parsnip model definitions for other sets of models.
 
-The `discrim` package has model definitions for the set of classification techniques called discriminant analysis methods (such as linear or quadratic discriminant analysis). 
+The `discrim` package has model definitions for the set of classification techniques called discriminant analysis methods (such as linear or quadratic discriminant analysis).
 
-In this way, the package dependencies required for installing parsnip are reduced. 
+In this way, the package dependencies required for installing parsnip are reduced.
 
-A list of all of the models that can be used with parsnip (across different packages that are on CRAN) can be found at https://www.tidymodels.org/find/.
+A list of all of the models that can be used with parsnip (across different packages that are on CRAN) can be found at <https://www.tidymodels.org/find/>.
 
 \
 
@@ -441,13 +437,13 @@ A list of all of the models that can be used with parsnip (across different pack
 
 It may become tedious to write many model specifications, or to remember how to write the code to generate them. The parsnip package includes an RStudio add-in that can help. Either choosing this add-in from the *Addins* toolbar menu or running the code:
 
-```
+```         
 parsnip_addin()
 ```
+
 will open a window in the Viewer panel of the RStudio IDE with a list of possible models for each model mode. These can be written to the source code panel.
 
 The model list includes models from parsnip and parsnip-extension packages that are on CRAN.
-
 
 \
 
@@ -470,19 +466,739 @@ ames_test  <-  testing(ames_split)
 lm_model <- linear_reg() %>% set_engine("lm")
 ```
 
+\
+
+# A MODEL WORKFLOW
 
 \
 
-# A model workflow
+In the previous chapter, we discussed the `parsnip` package, which can be used to define and fit the model. This chapter introduces a new concept called a model workflow. The purpose of this concept (and the corresponding tidymodels `workflow()` object) is to encapsulate the major pieces of the modeling process (discussed in [1.5 How does modeling fit into the data analysis process?](https://www.tmwr.org/software-modeling#model-phases)).
+
+The workflow is important in two ways. First, using a workflow concept encourages good methodology since it is a single point of entry to the estimation components of a data analysis. Second, it enables the user to better organize projects. These two points are discussed in the following sections.
 
 \
 
-## How does a workflow() use the formula? {#how-does-a-workflow-use-the-formula}
+## Where does the model begin and end?
+
+So far, when we have used the term “the model,” we have meant a structural equation that relates some predictors to one or more outcomes. Let’s consider again linear regression as an example. The outcome data are denoted as $y$, where there are $i=1…n$ samples in the training set. Suppose that there are $p$ predictors $x_{i1},…,x_{ip}$ that are used in the model. Linear regression produces a model equation of
+
+$$
+\hat{y}_i = \hat{\beta}_0 + \hat\beta_1x_{1i} +\ ...\ + \hat\beta_px_{pi}
+$$
+
+While this is a linear model, it is linear only in the parameters. The predictors could be nonlinear terms (such as the $log(x_i)$).
+
+The conventional way of thinking about the modeling process is that it only includes the model fit.
+
+For some straightforward data sets, fitting the model itself may be the entire process. However, a variety of choices and additional steps often occur before the model is fit:
+
+-   [While our example model has $p$ predictors, it is common to start with more than $p$ candidate predictors]{.underline}. Through exploratory data analysis or using domain knowledge, some of the predictors may be excluded from the analysis. In other cases, a feature selection algorithm may be used to make a data-driven choice for the minimum predictor set for the model.
+
+-   [There are times when the value of an important predictor is missing]{.underline}. Rather than eliminating this sample from the data set, the missing value could be imputed using other values in the data. For example, if $x_1$ were missing but was correlated with predictors $x_2$ and $x_3$, an imputation method could estimate the missing $x_1$ observation from the values of $x_2$ and $x_3$.
+
+-   [It may be beneficial to transform the scale of a predictor]{.underline}. If there is not a priori information on what the new scale should be, we can estimate the proper scale using a statistical transformation technique, the existing data, and some optimization criterion. Other transformations, such as PCA, take groups of predictors and transform them into new features that are used as the predictors.
+
+While these examples are related to steps that occur before the model fit, there may also be operations that occur after the model is created.
+
+When a classification model is created where the outcome is binary (e.g., event and non-event), it is customary to use a 50% probability cutoff to create a discrete class prediction, also known as a hard prediction. For example, a classification model might estimate that the probability of an event was 62%. Using the typical default, the hard prediction would be `event`. However, the model may need to be more focused on reducing false positive results (i.e., where true nonevents are classified as events). One way to do this is to raise the cutoff from 50% to some greater value. This increases the level of evidence required to call a new sample an event. While this reduces the true positive rate (which is bad), it may have a more dramatic effect on reducing false positives. The choice of the cutoff value should be optimized using data. This is an example of a post-processing step that has a significant effect on how well the model works, even though it is not contained in the model fitting step.
+
+It is important to focus on the broader modeling process, instead of only fitting the specific model used to estimate parameters. This broader process includes any preprocessing steps, the model fit itself, as well as potential post-processing activities. In this book, we will refer to this more comprehensive concept as the [model workflow]{.underline} and highlight how to handle all its components to produce a final model equation.
+
+Note that in other software, such as Python or Spark, similar collections of steps are called pipelines. In tidymodels, the term “pipeline” already connotes a sequence of operations chained together with a pipe operator (such as `%>%` from magrittr or the newer native `|>`). Rather than using ambiguous terminology in this context, we call the sequence of computational operations related to modeling workflows.
+
+Binding together the analytical components of data analysis is important for another reason. Future chapters will demonstrate how to accurately measure performance, as well as how to optimize structural parameters (i.e., model tuning). To correctly quantify model performance on the training set, [Chapter 10: Resampling for evaluating performance](https://www.tmwr.org/resampling) advocates using resampling methods. To do this properly, no data-driven parts of the analysis should be excluded from validation. To this end, the workflow must include all significant estimation steps.
+
+To illustrate, consider principal component analysis (PCA) signal extraction. We’ll talk about this more in [Section 8.4: Examples of recipe steps](#examples-of-recipe-steps) as well as [Chapter 16: Dimensionality Reduction](https://www.tmwr.org/dimensionality#dimensionality). PCA is a way to replace correlated predictors with new artificial features that are uncorrelated and capture most of the information in the original set. The new features could be used as the predictors, and least squares regression could be used to estimate the model parameters.
+
+There are two ways of thinking about the model workflow. Figure 7.1 illustrates the incorrect method: to think of the PCA preprocessing step, as not being part of the modeling workflow.
+
+![Fig 7.1: Incorrect mental model of where model estimation occurs in the data analysis process](.imgs/fig-7-1.png){width="500"}
 
 \
+
+The fallacy here is that, although PCA does significant computations to produce the components, its operations are assumed to have no uncertainty associated with them. The PCA components are treated as known and, if not included in the model workflow, the effect of PCA could not be adequately measured.
+
+Figure 7.2 shows an appropriate approach.
+
+![Fig 7.2: Correct mental model of where model estimation occurs in the data analysis process.](.imgs/fig-7-2.png){width="500"}
+
+\
+
+## Workflow basics
+
+\
+
+The workflows package allows the user to bind modeling and preprocessing objects together. Let’s start again with the Ames data and a simple linear model:
+
+```{r}
+(lm_model <- linear_reg() %>% 
+  set_engine("lm"))
+```
+
+\
+
+A workflow always requires a parsnip model object:
+
+```{r}
+(lm_wflow <- workflow() %>% 
+  add_model(lm_model))
+```
+
+Notice that we have not yet specified how this workflow should preprocess the data: `Preprocessor: None`.
+
+If our model is very simple, a standard R formula can be used as a preprocessor:
+
+```{r}
+(lm_wflow <- lm_wflow %>% 
+  add_formula(Sale_Price ~ Longitude + Latitude))
+```
+
+\
+
+Workflows have a `fit()` method that can be used to create the model. Using the objects created in Section 6.6:
+
+```{r}
+(lm_fit <- fit(lm_wflow, ames_train))
+```
+
+\
+
+We can also `predict()` on the fitted workflow:
+
+```{r}
+predict(lm_fit, ames_test %>% slice(1:3))
+```
+
+The `predict()` method follows all of the same rules and naming conventions that we described for the parsnip package in [Section 6.3: Make predictions](#make-predictions).
+
+Both the model and preprocessor can be removed or updated:
+
+```{r}
+( lm_fit %>% update_formula(Sale_Price ~ Longitude) )
+```
+
+Note that, in this new object, the output shows that the previous fitted model was removed since the new formula is inconsistent with the previous model fit.
+
+\
+
+## Adding raw variables to the workflow
+
+\
+
+There is another interface for passing data to the model, the `add_variables()` function, which uses a dplyr-like syntax for choosing variables. The function has two primary arguments: `outcomes` and `predictors`. These use a selection approach similar to the tidyselect backend of tidyverse packages to capture multiple selectors using `c()`.
+
+```{r}
+( lm_wflow <- lm_wflow %>% 
+  remove_formula() %>% 
+  add_variables(outcome = Sale_Price, predictors = c(Longitude, Latitude)) )
+```
+
+\
+The predictors could also have been specified using a more general selector, such as
+
+```         
+predictors = c(ends_with("tude"))
+```
+
+One nicety is that any outcome columns accidentally specified in the predictors argument will be quietly removed. This facilitates the use of:
+
+```         
+predictors = everything()
+```
+
+\
+When the model is fit, the specification assembles these data, unaltered, into a data frame and passes it to the underlying function:
+
+```{r}
+fit(lm_wflow, ames_train)
+```
+
+\
+If you would like the underlying modeling method to do what it would normally do with the data, `add_variables()` can be a helpful interface. As we will see in [Special formulas and inline functions], it also facilitates more complex modeling specifications.
+
+However, as we mention in the next section, models such as `glmnet` and `xgboost` expect the user to make dummy variables from factor predictors. In these cases, a recipe or formula interface will typically be a better choice.
+
+In the next chapter, we will look at a more powerful preprocessor (called a *recipe*) that can also be added to a workflow.
+
+\
+
+## How does a workflow use the formula? {#how-does-a-workflow-use-the-formula}
+
+\
+Recall from [Section 3.2: What does the R formula do?](https://www.tmwr.org/base-r#formula) that the formula method in R has multiple purposes (we will discuss this further in [Feature Engineering (recipes)](#feature-engineering-recipes)). One of these is to properly encode the original data into an analysis-ready format. This can involve executing inline transformations (e.g., `log(x)`), creating dummy variable columns, creating interactions or other column expansions, and so on. However, many statistical methods require different types of encodings:
+
+-   Most packages for tree-based models use the formula interface but *do not* encode the categorical predictors as dummy variables.
+
+-   Packages can use special inline functions that tell the model function how to treat the predictor in the analysis. For example, in survival analysis models, a formula term such as `strata(site)` would indicate that the column `site` is a stratification variable. This means it should not be treated as a regular predictor and does not have a corresponding location parameter estimate in the model.
+
+-   A few R packages have extended the formula in ways that base R functions cannot parse or execute. In multilevel models (e.g., mixed models or hierarchical Bayesian models), a model term such as `(week | subject)` indicates that the column `week` is a random effect that has different slope parameter estimates for each value of the `subject` column.
+
+A workflow is a general purpose interface. When `add_formula()` is used, how should the workflow preprocess the data? Since the preprocessing is model dependent, **workflows** attempts to emulate what the underlying model would do whenever possible. If it is not possible, the formula processing should not do anything to the columns used in the formula. Let’s look at this in more detail.
+
+\
+
+### Tree-based models {.unnumbered}
+
+When we fit a tree to the data, the **parsnip** package understands what the modeling function would do. For example, if a random forest model is fit using the **ranger** or **randomForest** packages, the workflow knows predictors columns that are factors should be left as is.
+
+As a counterexample, a boosted tree created with the **xgboost** package requires the user to create dummy variables from factor predictors (since `xgboost::xgb.train()` will not). This requirement is embedded into the model specification object and a workflow using **xgboost** will create the indicator columns for this engine. Also note that a different engine for boosted trees, C5.0, does not require dummy variables so none are made by the workflow.
+
+This determination is made automatically for each model and engine combination.\
+\
+
+### Special formulas and inline functions
+
+\
+A number of multilevel models have standardized on a formula specification devised in the **lme4** package. For example, to fit a regression model that has random effects for subjects in this package, we would use the following formula:\
+
+```         
+library(lme4)
+lmer(distance ~ Sex + (age | Subject), data = Orthodont)
+```
+
+The effect of this is that each subject will have an estimated intercept and slope parameter for `age`.
+
+The problem is that standard R methods can’t properly process this formula:
+
+```         
+model.matrix(distance ~ Sex + (age | Subject), data = Orthodont)
+
+#> Warning in Ops.ordered(age, Subject): '|' is not meaningful for ordered factors
+#>      (Intercept) SexFemale age | SubjectTRUE
+#> attr(,"assign")
+#> [1] 0 1 2
+#> attr(,"contrasts")
+#> attr(,"contrasts")$Sex
+#> [1] "contr.treatment"
+#> 
+#> attr(,"contrasts")$`age | Subject`
+#> [1] "contr.treatment"
+```
+
+\
+The result is a zero row data frame. The issue is that the special formula has to be processed by the underlying package code, not the standard `model.matrix()` approach. Even if this formula could be used with `model.matrix()`, this would still present a problem since the formula also specifies the statistical attributes of the model.
+
+The solution in **workflows** is an optional supplementary model formula that can be passed to `add_model()`. The `add_variables()` specification provides the bare column names, and then the actual formula given to the model is set within `add_model()`:
+
+```{r}
+library(multilevelmod)
+
+( multilevel_spec <- linear_reg() %>% set_engine("lmer") )
+```
+
+```{r}
+( multilevel_workflow <- workflow() %>% 
+  # Pass the data along as-is: 
+  add_variables(outcome = distance, predictors = c(Sex, age, Subject)) %>% 
+  add_model(multilevel_spec, 
+            # This formula is given to the model
+            formula = distance ~ Sex + (age | Subject)) )
+```
+
+\
+
+```         
+multilevel_fit <- fit(multilevel_workflow, data = Orthodont)
+#> ══ Workflow [trained] ═══════════════════════════════════════════════════════════════
+#> Preprocessor: Variables
+#> Model: linear_reg()
+#> 
+#> ── Preprocessor ─────────────────────────────────────────────────────────────────────
+#> Outcomes: distance
+#> Predictors: c(Sex, age, Subject)
+#> 
+#> ── Model ────────────────────────────────────────────────────────────────────────────
+#> Linear mixed model fit by REML ['lmerMod']
+#> Formula: distance ~ Sex + (age | Subject)
+#>    Data: data
+#> REML criterion at convergence: 471.2
+#> Random effects:
+#>  Groups   Name        Std.Dev. Corr 
+#>  Subject  (Intercept) 7.391         
+#>           age         0.694    -0.97
+#>  Residual             1.310         
+#> Number of obs: 108, groups:  Subject, 27
+#> Fixed Effects:
+#> (Intercept)    SexFemale  
+#>       24.52        -2.15
+```
+
+\
+\
+We can even use the previously mentioned `strata()` function from the **survival** package for survival analysis:
+
+```{r}
+library(censored)
+
+( parametric_spec <- survival_reg() )
+```
+
+```{r}
+( parametric_workflow <- workflow() %>% 
+    add_variables(outcome = c(fustat, futime), predictors = c(age, rx)) %>% 
+    add_model(parametric_spec, 
+              formula = Surv(futime, fustat) ~ age + strata(rx)) )
+```
+
+```{r}
+( parametric_fit <- fit(parametric_workflow, data = ovarian) )
+```
+
+Notice how in both of these calls the model-specific formula was used.
+
+\
+
+## Creating multiple workflows at once
+
+\
+In some situations, the data require numerous attempts to find an appropriate model. For example:
+
+-   For predictive models, it is advisable to evaluate a variety of different model types. This requires the user to create multiple model specifications.
+
+-   Sequential testing of models typically starts with an expanded set of predictors. This “full model” is compared to a sequence of the same model that removes each predictor in turn. Using basic hypothesis testing methods or empirical validation, the effect of each predictor can be isolated and assessed.
+
+In these situations, as well as others, it can become tedious or onerous to create a lot of workflows from different sets of preprocessors and/or model specifications. To address this problem, the **workflowset** package creates combinations of workflow components. A list of preprocessors (e.g., formulas, **dplyr** selectors, or feature engineering recipe objects discussed in the next chapter) can be combined with a list of model specifications, resulting in a set of workflows.
+
+\
+As an example, let’s say that we want to focus on the different ways that house location is represented in the Ames data. We can create a set of formulas that capture these predictors:
+
+```{r}
+location <- list(
+  longitude = Sale_Price ~ Longitude,
+  latitude = Sale_Price ~ Latitude,
+  coords = Sale_Price ~ Longitude + Latitude,
+  neighborhood = Sale_Price ~ Neighborhood
+)
+```
+
+\
+These representations can be crossed with one or more models using the `workflow_set()` function. We’ll just use the previous linear model specification to demonstrate:
+
+```{r}
+library(workflowsets)
+
+( location_models <- workflow_set(preproc=location, 
+                                  models=list(lm=lm_model)) )
+```
+
+\
+
+```{r}
+location_models$info[[1]]
+```
+
+\
+
+```{r}
+extract_workflow(location_models, id = "coords_lm")
+```
+
+\
+Workflow sets are mostly designed to work with resampling, which is discussed in [Chapter 10. Resampling for evaluating performance](https://www.tmwr.org/resampling). The columns `option` and `result` must be populated with specific types of objects that result from resampling. We will demonstrate this in more detail in [Chapter 11. Comparing models with resampling](https://www.tmwr.org/compare) and [Chapter 15. Screening many models](https://www.tmwr.org/workflow-sets).
+
+In the meantime, let’s create model fits for each formula and save them in a new column called `fit`. We’ll use basic **dplyr** and **purrr** operations:
+
+```{r}
+(
+  location_models <- location_models %>%
+    mutate(fit = map(info, ~ fit(.x$workflow[[1]], ames_train)))
+)
+```
+
+\
+
+```{r}
+filter(location_models, wflow_id=="longitude_lm")$fit
+```
+
+We use a **purrr** function here to map through our models, but there is an easier, better approach to fit workflow sets that will be introduced in [Section 11.1: Creating multiple models with workflow sets](https://www.tmwr.org/compare#workflow-set).
+
+In general, there’s a lot more to workflow sets! While we’ve covered the basics here, the nuances and advantages of workflow sets won’t be illustrated until [Chapter 15: Screening many models](https://www.tmwr.org/workflow-sets).
+
+\
+
+## Evaluating the test set
+
+\
+Let’s say that we’ve concluded our model development and have settled on a final model. There is a convenience function called `last_fit()` that will *fit* the model to the entire training set and *evaluate* it with the testing set.
+
+Using `lm_wflow` as an example, we can pass the model and the initial training/testing split to the function:
+
+```{r}
+(final_lm_res <- last_fit(lm_wflow, ames_split))
+```
+
+Notice that `last_fit()` takes a data split as an input, [not a dataframe]{.underline}. This function uses the split to generate the training and test sets for the final fitting and evaluation.
+
+\
+The `.workflow` column contains the fitted workflow and can be pulled out of the results using:
+
+```{r}
+(fitted_lm_wflow <- extract_workflow(final_lm_res))
+```
+
+\
+Similarly, `collect_metrics()` and `collect_predictions()` provide access to the performance metrics and predictions, respectively.
+
+```{r}
+collect_metrics(final_lm_res)
+```
+
+```{r}
+collect_predictions(final_lm_res) %>% slice(1:5)
+```
+
+\
+We’ll see more about `last_fit()` in action and how to use it again in [Section 16.6 Modeling](https://www.tmwr.org/dimensionality#bean-models).
+
+Note that when using validation sets, `last_fit()` has an argument called `add_validation_set` to specify if we should train the final model solely on the training set (the default) or the combination of the training and validation sets.
+
+\
+
+## Chapter summary
+
+\
+In this chapter, you learned that the modeling process encompasses more than just estimating the parameters of an algorithm that connects predictors to an outcome.
+
+This process also includes preprocessing steps and operations taken after a model is fit.
+
+We introduced a concept called a *model workflow* that can capture the important components of the modeling process.
+
+Multiple workflows can also be created inside of a *workflow set*.
+
+The `last_fit()` function is convenient for fitting a final model to the training set and evaluating with the test set.\
+\
+For the Ames data, the related code that we’ll see used again is:
+
+```{r}
+rm(list=ls())
+
+data(ames)
+ames <- mutate(ames, Sale_Price = log10(Sale_Price))
+
+set.seed(502)
+ames_split <- initial_split(ames, prop = 0.80, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test  <- testing(ames_split)
+
+lm_model <- linear_reg() %>% set_engine("lm")
+
+lm_wflow <- workflow() %>% 
+  add_model(lm_model) %>% 
+  add_variables(outcome = Sale_Price, predictors = c(Longitude, Latitude))
+
+lm_fit <- fit(lm_wflow, ames_train)
+```
+
+\
+
+# FEATURE ENGINEERING {#feature-engineering-recipes}
+
+\
+Feature engineering entails reformatting predictor values to make them easier for a model to use effectively. This includes transformations and encodings of the data to best represent their important characteristics.
+
+Imagine that you have two predictors in a data set that can be more effectively represented in your model as a ratio; creating a new predictor from the ratio of the original two is a simple example of feature engineering.
+
+Take the location of a house in Ames as a more involved example. There are a variety of ways that this spatial information can be exposed to a model, including neighborhood (a qualitative measure), longitude/latitude, distance to the nearest school or Iowa State University, and so on. When choosing how to encode these data in modeling, we might choose an option we believe is most associated with the outcome. The original format of the data, for example numeric (e.g., distance) versus categorical (e.g., neighborhood), is also a driving factor in feature engineering choices.
+
+Other examples of preprocessing to build better features for modeling include:
+
+-   Correlation between predictors can be reduced via feature extraction or the removal of some predictors.
+
+-   When some predictors have missing values, they can be imputed using a sub-model.
+
+-   Models that use variance-type measures may benefit from coercing the distribution of some skewed predictors to be symmetric by estimating a transformation.
+
+Feature engineering and data preprocessing can also involve reformatting that may be required by the model. Some models use geometric distance metrics and, consequently, numeric predictors should be centered and scaled so that they are all in the same units. Otherwise, the distance values would be biased by the scale of each column.
+
+Different models have different preprocessing requirements and some, such as tree-based models, require very little preprocessing at all. [Appendix A: Recomended preprocessing](#recomended-preprocessing) contains a small table of recommended preprocessing techniques for different models.
+
+In this chapter, we introduce the **recipes** package that you can use to combine different feature engineering and preprocessing tasks into a single object and then apply these transformations to different data sets. The **recipes** package is, like **parsnip** for models, one of the core tidymodels packages.
+
+This chapter uses the Ames housing data and the R objects created in the book so far.
+
+\
+
+## A simple recipe
+
+\
+
+In this section, we will focus on a small subset of the predictors available in the Ames housing data:
+
+\
+
+## Using recipes
+
+\
+
+XXXXX
+
+\
+
+## How data are used by the recipe
+
+\
+
+XXXXX 
+
+\
+
+## Examples of recipe steps {#examples-of-recipe-steps}
+
+\
+
+XXXXX
+
+\
+
+### Encoding qualitative data ina numeric format
+
+\
+
+XXXXXXX
+
+\
+
+### Interaction terms
+
+\
+
+XXXXXXX
+
+\
+
+### Spline functions
+
+\
+
+XXXXXXX
+
+\
+
+### Feature extraction
+
+\
+
+XXXXXXX
+
+\
+
+### Row sampling steps
+
+\
+
+XXXXXXX
+
+\
+
+### General transformations
+
+\
+
+XXXXXXX
+
+\
+
+### Natural language processing
+
+\
+
+XXXXXXX
+
+\
+
+## Skipping steps for new data
+
+\
+
+XXXXXXX
+
+\
+
+## Tidy a recipe
+
+\
+
+XXXXXXX
+
+\
+
+
+## Column roles
+
+\
+
+XXXXXXX
+
+\
+
+## Chapter summary
+
+\
+
+XXXXXXX
+
+\
+
+```{r}
+rm(list=ls())
+
+data(ames)
+ames <- mutate(ames, Sale_Price = log10(Sale_Price))
+
+set.seed(502)
+ames_split <- initial_split(ames, prop = 0.80, strata = Sale_Price)
+ames_train <- training(ames_split)
+ames_test  <-  testing(ames_split)
+
+ames_rec <- 
+  recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + 
+           Latitude + Longitude, data = ames_train) %>%
+  step_log(Gr_Liv_Area, base = 10) %>% 
+  step_other(Neighborhood, threshold = 0.01) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_") ) %>% 
+  step_ns(Latitude, Longitude, deg_free = 20)
+  
+lm_model <- linear_reg() %>% set_engine("lm")
+
+lm_wflow <- 
+  workflow() %>% 
+  add_model(lm_model) %>% 
+  add_recipe(ames_rec)
+
+lm_fit <- fit(lm_wflow, ames_train)
+```
+
+
+\
+
+# MODEL PERFORMANCE
+
+\
+
+XXXXXXX
+
+\
+
+## Performance metrics and inference
+
+\
+
+XXXXXXX
+
+\
+
+## Regression metrics
+
+\
+
+XXXXXXX
+
+\
+
+## Binary classification metrics
+
+\
+
+XXXXXXX
+
+\
+
+## Multiclass classification metrics
+
+\
+
+XXXXXXX
+
+\
+
+## Chapter summary
+
+\
+
+XXXXXXX
+
+\
+
+***
 
 # REFERENCES {#references .unnumbered}
 
 \
 
-Friedman, J, T Hastie, and R Tibshirani. 2010. “*Regularization Paths for Generalized Linear Models via Coordinate Descent.*” Journal of Statistical Software 33 (1): 1.
+Craig–Schapiro, R, M Kuhn, C Xiong, E Pickering, J Liu, T Misko, R Perrin, et al. 2011. “*Multiplexed Immunoassay Panel Identifies Novel CSF Biomarkers for Alzheimer’s Disease Diagnosis and Prognosis*”. PLoS ONE 6 (4): e18850.
+
+\
+
+Friedman, J. Hastie, T. and Tibshirani, R. 2010. “*Regularization Paths for Generalized Linear Models via Coordinate Descent.*” Journal of Statistical Software 33 (1): 1.
+
+\
+
+Hand, D, and R Till. 2001. “*A Simple Generalisation of the Area Under the ROC Curve for Multiple Class Classification Problems*”. Machine Learning 45 (August): 171–86.
+
+\
+
+Hosmer, D, and Sy Lemeshow. 2000. "*Applied Logistic Regression*". New York: John Wiley; Sons.
+
+\
+
+Jungsu, K, D Basak, and D Holtzman. 2009. “*The Role of Apolipoprotein E in Alzheimer’s Disease*”. Neuron 63 (3): 287–303.
+
+\
+
+Kuhn, M. and Johnson, K. 2020. *Feature Engineering and Selection: A Practical Approach for Predictive Models*. CRC Press. [<https://bookdown.org/max/FES/recursive-feature-elimination.html>]
+
+\
+
+Opitz, J, and S Burst. 2019. “*Macro F1 and Macro F1*”. https://arxiv.org/abs/1911.03347.
+
+\
+
+Wu, X, and Z Zhou. 2017. “*A Unified View of Multi-Label Performance Measures*”. In International Conference on Machine Learning, 3780–88.
+
+\
+
+***
+
+# (APPENDIX) APPENDIX {.unnumbered}
+
+\
+
+# : Recomended Preprocessing {#recomended-preprocessing}
+
+\
+The type of preprocessing needed depends on the type of model being fit.
+
+For example, models that use distance functions or dot products should have all of their predictors on the same scale so that distance is measured appropriately.
+
+To learn more about each of these models, and others that might be available, see [https://www.tidymodels.org/find/parsnip/](#0).
+
+This Appendix provides recommendations for baseline levels of preprocessing that are needed for various model functions. In Table A1, the preprocessing methods are categorized as:
+
+-   **dummy**: Do qualitative predictors require a numeric encoding (e.g., via dummy variables or other methods)?
+
+-   **zv**: Should columns with a single unique value be removed?
+
+-   **impute**: If some predictors are missing, should they be estimated via imputation?
+
+-   **decorrelate**: If there are correlated predictors, should this correlation be mitigated? This might mean filtering out predictors, using principal component analysis, or a model-based technique (e.g., regularization).
+
+-   **normalize**: Should predictors be centered and scaled?
+
+-   **transform**: Is it helpful to transform predictors to be more symmetric?
+
+The information in Table A1 is not exhaustive and somewhat depends on the implementation.
+
+For example, as noted below the table, some models may not require a particular preprocessing operation but the implementation may require it.
+
+In the table, ✔ indicates that the method is required for the model and × indicates that it is not. The ◌ symbol means that the model *may* be helped by the technique but it is not required.
+
+![Table A1. Preprocessing methods for different models.](.imgs/table-A-1.png){width="450"}
+
+\
+Footnotes:
+
+1.  Decorrelating predictors may not help improve performance. However, fewer correlated predictors can improve the estimation of variance importance scores (see [Figure 11.4](https://bookdown.org/max/FES/recursive-feature-elimination.html#fig:greedy-rf-imp) of [M. Kuhn and Johnson (2020)](#references)). Essentially, the selection of highly correlated predictors is almost random.
+
+2.  The needed preprocessing for these models depends on the implementation. Specifically: (a) *Theoretically*, any tree-based model does not require imputation. However, many tree ensemble implementations require imputation; and (b) While tree-based boosting methods generally do not require the creation of dummy variables, models using the `xgboost` engine do.
